@@ -28,7 +28,7 @@ def WritePatient(patient_dict: dict):
     else:
         return "errorInserting", None
 
-def GetPatientByIdentifier(patientSystem,patientValue)
+def GetPatientByIdentifier(patientSystem,patientValue):
     try:
         patient = collection.find_one(("identifier.system";patientSystem,"Identifier.value";patientValue))
         if patient:
