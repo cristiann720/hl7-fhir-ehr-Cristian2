@@ -89,7 +89,7 @@
                     response.ok ? `Solicitud creada creada con ID: ${result.id}`
                         : `Error ${result.detail || 'Error desconocido'}`;
             } catch (error) {
-                document-getElementById("result").innerText = `Error al conectar con el servidor`;
+                document.getElementById("result").innerText = `Error al conectar con el servidor`;
                 console.error(error);
             }
         });
