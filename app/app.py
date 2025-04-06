@@ -8,7 +8,9 @@ from pydantic import BaseModel
 from fastapi import HTTPException
 from connection import connect_to_mongodb
 from bson import ObjectId
+
 import uvicorn
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -17,6 +19,7 @@ app.add_middleware(
     allow_methods=["*"],  # Permitir todos los métodos (GET, POST, etc.)
     allow_headers=["*"],  # Permitir todos los encabezados
 )
+
 @app.get("/service_request/{request_id}")
 def get_service_request(request_id: str):
     collection = connect_to_mongodb("SamplePatientService", "service_requests")
@@ -24,10 +27,12 @@ def get_service_request(request_id: str):
         result = collection.find_one({"_id": ObjectId(request_id)})
     except Exception as e:
         return {"error": f"ID inválido: {str(e)}"}
+    
     if result:
         result["_id"] = str(result["_id"])  # Convertir el ObjectId a string
         return result
     return {"error": "Solicitud no encontrada"}
+
 @app.get("/patient/{patient_id}", response_model=dict)
 async def get_patient_by_id(patient_id: str):
     print("solicitud datos:",patient_id)
@@ -56,37 +61,44 @@ async def add_patient(request: Request):
         return {"_id":patient_id}  # Return patient id
     else:
         raise HTTPException(status_code=500, detail=f"Validating error: {status}")
+
 # Endpoint para crear una nueva solicitud de servicio
 from app.controlador.PatientCrud import WriteServiceRequest
+
 @app.post("/service_request")
 async def create_service_request(request: Request):
     try:
         data = await request.json()
-        print("Datos recibidos:", data)
+        print(":inbox_tray: Datos recibidos:", data)
         request_json = {
-            "patientIdentifierType": data.get("patientIdentifierType"),
+            "patientIdentifierTyped": data.get("patientIdentifierType"),
             "patientId": data.get("patientId"),
             "patientName": data.get("patientName"),
             "requesterId": data.get("requesterId"),
             "requesterName": data.get("requesterName"),
             "specimenType": data.get("specimenType"),
             "collectionDate": data.get("collectionDate"),
-            "collectionTime": data.get("collectionTime"),
-            "priority": data.get("priority"),
-            "reason": data.get("reason")
+            "collectionTime": data.get("collectionTIme"),
+            "priority": dat.get("priority"),
+            "reason": data.get("reason"),
         }
+
         collection = connect_to_mongodb("SamplePatientService", "service_requests")
         result = collection.insert_one(request_json)
+
         return {"status": "success", "id": str(result.inserted_id)}
+
     except Exception as e:
         print(":x: Error en /service_request:", e)
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
 @app.get("/service_request_form", response_class=HTMLResponse)
 async def serve_form():
     with open("static/service_request_form.html", "r") as f:
         html_content = f.read()
     return HTMLResponse(content=html_content, status_code=200)
+    
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run("app.app:app", host="0.0.0.0", port=10000, reload=False)from fastapi import FastAPI, Request
+    uvicorn.run("app.app:app", host="0.0.0.0", port=10000, reload=False)
