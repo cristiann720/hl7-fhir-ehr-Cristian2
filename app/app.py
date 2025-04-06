@@ -62,14 +62,18 @@ from app.controlador.PatientCrud import WriteServiceRequest
 async def create_service_request(request: Request):
     try:
         data = await request.json()
-        print(":inbox_tray: Datos recibidos:", data)
+        print("Datos recibidos:", data)
         request_json = {
-            "patient_id": data.get("patient_id"),
-            "document_type": data.get("document_type"),
-            "service_type": data.get("service_type"),
-            "description": data.get("description"),
-            "requester": data.get("requester"),
+            "patientIdentifierType": data.get("patientIdentifierType"),
+            "patientId": data.get("patientId"),
+            "patientName": data.get("patientName"),
+            "requesterId": data.get("requesterId"),
+            "requesterName": data.get("requesterName"),
+            "specimenType": data.get("specimenType"),
+            "collectionDate": data.get("collectionDate"),
+            "collectionTime": data.get("collectionTime"),
             "priority": data.get("priority"),
+            "reason": data.get("reason")
         }
         collection = connect_to_mongodb("SamplePatientService", "service_requests")
         result = collection.insert_one(request_json)
