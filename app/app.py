@@ -79,7 +79,7 @@ async def create_service_request(request: Request):
             "specimenType": data.get("specimenType"),
             "collectionDate": data.get("collectionDate"),
             "collectionTime": data.get("collectionTIme"),
-            "priority": dat.get("priority"),
+            "priority": data.get("priority"),
             "reason": data.get("reason"),
         }
 
